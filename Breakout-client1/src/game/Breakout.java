@@ -9,6 +9,13 @@ import items.Ball;
 import items.Bar;
 import items.Block;
 
+/**
+ * Breakout:
+ * Clase de juego. Crea la ventana principal y contiene los métodos necesarios para la ejecución de la jugabilidad.
+ * Hereda JPanel para dibujar los objetos en pantalla.
+ * Implementa KeyListener para input de teclado.
+ * @author Eduardo Bolívar
+ */
 public class Breakout extends JPanel implements KeyListener {
     private JFrame window;
     private Bar bar;
@@ -16,6 +23,11 @@ public class Breakout extends JPanel implements KeyListener {
     private ArrayList<Block> blocks;
     private boolean running;
 
+    /**
+     * Constructor:
+     * Inicializa los atributos del juego.
+     * @author Eduardo Bolívar
+     */
     public Breakout() {
         this.initWindow();
         int initX = this.window.getSize().width / 2;
@@ -29,6 +41,12 @@ public class Breakout extends JPanel implements KeyListener {
         this.setVisible(true);
     }
 
+    /**
+     * initWindow:
+     * Método que inicializa la ventana de juego.
+     * Asigna título, tamaño. y visión de la ventana.
+     * @author Eduardo Bolívar
+     */
     private void initWindow() {
         this.window = new JFrame("Breakout");
         this.window.setSize(1250,720);
@@ -37,6 +55,14 @@ public class Breakout extends JPanel implements KeyListener {
         this.window.setVisible(true);
     }
 
+    /**
+     * initObjects:
+     * Inicializa los objetos en pantalla. Establece la posición inicial de la barra, de la bola, y de cada bloque en el arreglo de bloques.
+     * Agrega los bloques al arreglo.
+     * @param initX es la posición X inicial de la barra y de la bola, la cual corresponde a la mitad de la pantalla.
+     * @param initY es la posición Y inicial de la barra y de la bola, que corresponde a un punto bajo de la pantalla.
+     * @author Eduardo Bolívar
+     */
     private void initObjects(int initX, int initY) {
         this.bar = new Bar(initX, initY, 100, 10);
         this.ball = new Ball(initX + 50, initY - 10, 10);
@@ -69,6 +95,12 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * collideBallBar:
+     *
+     * @param b1
+     * @param b2
+     */
     public void collideBallBar(Ball b1, Bar b2) {
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
