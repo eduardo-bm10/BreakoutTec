@@ -1,5 +1,10 @@
 package items;
 
+/**
+ * Clase Object:
+ * Tiene los atributos de posición y dimensiones de los objetos y métodos para acceder a dichos atributos.
+ * @author Eduardo Bolívar
+ */
 public class Object
 {
     protected int x;
@@ -7,6 +12,15 @@ public class Object
     protected int width;
     protected int height;
 
+    /**
+     * Constructor Object:
+     * Asigna valores iniciales de posición en x, posición en y, ancho y altura del objeto.
+     * @param x posición x inicial.
+     * @param y posición y inicial.
+     * @param width anchura inicial del objeto.
+     * @param height altura inicial del objeto.
+     * @author Eduardo Bolívar
+     */
     public Object(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -14,18 +28,38 @@ public class Object
         this.height = height;
     }
 
+    /**
+     * getX:
+     * @return la posición x actual del objeto.
+     * @author Eduardo Bolívar
+     */
     public int getX() {
         return this.x;
     }
 
+    /**
+     * getY:
+     * @return la posición en y actual del objeto.
+     * @author Eduardo Bolívar
+     */
     public int getY() {
         return this.y;
     }
 
+    /**
+     * getWidth:
+     * @return la anchura del objeto.
+     * @author Eduardo Bolívar
+     */
     public int getWidth() {
         return this.width;
     }
 
+    /**
+     * getHeight:
+     * @return la altura del objeto.
+     * @author Eduardo Bolívar
+     */
     public int getHeight() {
         return this.height;
     }

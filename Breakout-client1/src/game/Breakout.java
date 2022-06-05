@@ -97,9 +97,10 @@ public class Breakout extends JPanel implements KeyListener {
 
     /**
      * collideBallBar:
-     *
-     * @param b1
-     * @param b2
+     * Verifica si existe colisión entre la bola y la barra del jugador, si es así, invierte la dirección de la bola hacia arriba.
+     * @param b1 bola de juego.
+     * @param b2 barra de juego.
+     * @author Eduardo Bolívar
      */
     public void collideBallBar(Ball b1, Bar b2) {
         Rectangle r1 = new Rectangle();
@@ -111,6 +112,13 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * collideBallBlock:
+     * Verifica si existe colisión entre la bola y algún bloque dentro del arreglo de bloques, si es así, destruye el bloque y cambia la dirección de la bola.
+     * @param b1 bola del juego.
+     * @param blocks arreglo de bloques del juego.
+     * @author Eduardo Bolívar
+     */
     private void collideBallBlock(Ball b1, ArrayList<Block> blocks) {
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
@@ -140,21 +148,45 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * isRunning:
+     * Informa del estado de ejecución del juego, si está ejecutándose o no.
+     * @return true si el juego está en ejecución. False si la ejecución termina.
+     * @author Eduardo Bolívar
+     *
+     */
     public boolean isRunning() {
         return this.running;
     }
 
+    /**
+     * checkCollisions:
+     * Verifica constantemente si existe una colisión bola-barra o colisión bola-bloques.
+     * Llama a los métodos collideBallBar y collideBallBlock.
+     * @author Eduardo Bolívar
+     */
     private void checkCollisions() {
         collideBallBar(this.ball, this.bar);
         collideBallBlock(this.ball, this.blocks);
     }
 
+    /**
+     * update:
+     * Actualiza constantemente los objetos del juego.
+     * Actualiza la posición de la barra, la posición de la bola, y el estado de los bloques.
+     * @author Eduardo Bolívar
+     */
     public void update() {
         this.bar.update_bar();
         this.ball.update_ball(this.bar.getX(), this.bar.getY());
         this.checkCollisions();
     }
 
+    /**
+     * render:
+     * Redibuja las actualizaciones realizadas por update para ser visualizadas en pantalla.
+     * @author Eduardo Bolívar
+     */
     public void render() {
         this.window.repaint();
     }
@@ -164,17 +196,38 @@ public class Breakout extends JPanel implements KeyListener {
 
     }
 
+    /**
+     * keyPressed:
+     * Método de la interfaz KeyListener.
+     * Realiza el movimiento de la barra si se presiona la flecha derecha o izquierda.
+     * Realiza el lanzamiento de la bola desde la barra si se presiona barra espaciadora.
+     * @param e the event to be processed.
+     */
     @Override
     public void keyPressed(KeyEvent e) {;
         this.bar.move(e.getKeyCode());
         this.ball.startedMoving(e.getKeyCode());
     }
 
+    /**
+     * keyReleased:
+     * Método de la interfaz KeyListener
+     * Detiene el movimiento de la barra cuando se libera la flecha derecha o izquierda.
+     * @param e the event to be processed
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         this.bar.stop(e.getKeyCode());
     }
 
+    /**
+     * paintComponent:
+     * Método de la clase JPanel
+     * Dibuja un rectángulo para la barra de juego en la posición respectiva
+     * Dibuja una círculo para la bola de juego en la posición respectiva
+     * Dibuja los bloques si estos no han sido destruidos por la bola
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
