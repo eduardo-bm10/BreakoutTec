@@ -17,11 +17,15 @@ import items.Block;
  * @author Eduardo Bolívar
  */
 public class Breakout extends JPanel implements KeyListener {
+    private static int points;
+    private static int lives;
     private JFrame window;
     private Bar bar;
     private Ball ball;
     private ArrayList<Block> blocks;
     private boolean running;
+    private JLabel pointsText;
+    private JLabel livesText;
 
     /**
      * Constructor:
@@ -32,13 +36,18 @@ public class Breakout extends JPanel implements KeyListener {
         this.initWindow();
         int initX = this.window.getSize().width / 2;
         int initY = this.window.getSize().height - 80;
+        Breakout.points = 0;
+        Breakout.lives = 3;
+
         this.initObjects(initX, initY);
-        this.running = true;
+        this.initText();
+
         this.window.add(this);
         this.window.addKeyListener(this);
-
         this.setBackground(Color.DARK_GRAY);
         this.setVisible(true);
+
+        this.running = true;
     }
 
     /**
@@ -95,6 +104,31 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    public void initText() {
+        this.pointsText = new JLabel();
+        pointsText.setSize(100,100);
+        pointsText.setLocation(50,50);
+        pointsText.setForeground(Color.WHITE);
+
+        this.livesText = new JLabel();
+        this.livesText.setSize(100,100);
+        this.livesText.setLocation(250,50);
+        this.livesText.setForeground(Color.WHITE);
+
+
+        this.add(pointsText);
+        this.add(livesText);
+    }
+
+    public static void removeLife() {
+        Breakout.lives--;
+    }
+
+    public void updateText() {
+        pointsText.setText("Puntos: " + Breakout.points);
+        livesText.setText("Vidas: " + Breakout.lives);
+    }
+
     /**
      * collideBallBar:
      * Verifica si existe colisión entre la bola y la barra del jugador, si es así, invierte la dirección de la bola hacia arriba.
@@ -128,21 +162,25 @@ public class Breakout extends JPanel implements KeyListener {
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
                 b.kill();
+                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
                 b.kill();
+                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
                 b.kill();
+                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
                 b.kill();
+                points++;
                 break;
             }
         }
@@ -177,8 +215,13 @@ public class Breakout extends JPanel implements KeyListener {
      * @author Eduardo Bolívar
      */
     public void update() {
+        if (lives == 0) {
+            this.gameOver();
+        }
         this.bar.update_bar();
         this.ball.update_ball(this.bar.getX(), this.bar.getY());
+
+        this.updateText();
         this.checkCollisions();
     }
 
@@ -191,6 +234,14 @@ public class Breakout extends JPanel implements KeyListener {
         this.window.repaint();
     }
 
+    public void gameOver() {
+        this.running = false;
+    }
+
+    public void close() {
+        this.running = false;
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -201,12 +252,18 @@ public class Breakout extends JPanel implements KeyListener {
      * Método de la interfaz KeyListener.
      * Realiza el movimiento de la barra si se presiona la flecha derecha o izquierda.
      * Realiza el lanzamiento de la bola desde la barra si se presiona barra espaciadora.
+     * Finaliza la ejecución del juego si se presiona ESC.
      * @param e the event to be processed.
      */
     @Override
     public void keyPressed(KeyEvent e) {;
         this.bar.move(e.getKeyCode());
-        this.ball.startedMoving(e.getKeyCode());
+        if (e.getKeyCode() == 32) {
+            this.ball.startedMoving();
+        }
+        else if (e.getKeyCode() == 27) {
+            this.close();
+        }
     }
 
     /**
@@ -237,6 +294,10 @@ public class Breakout extends JPanel implements KeyListener {
 
         g2d.setColor(Color.white);
         g2d.fillOval(this.ball.getX(), this.ball.getY(), this.ball.getWidth(), this.bar.getHeight());
+
+        if (lives == 0) {
+            g2d.drawString("Game over", this.window.getWidth() / 2, this.window.getHeight() / 2);
+        }
 
         for (Block b : this.blocks) {
             if (b.getType() == 1) {

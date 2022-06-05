@@ -1,5 +1,7 @@
 package items;
 
+import game.Breakout;
+
 /**
  * Clase Ball:
  * Define la bola de juego
@@ -38,18 +40,16 @@ public class Ball extends Object {
         this.moving = false;
         this.right = true;
         this.up = true;
+        Breakout.removeLife();
     }
 
     /**
      * startedMoving:
      * Activa el movimiento de la bola si se presiona la barra espaciadora
-     * @param key código de tecla presionada
      * @author Eduardo Bolívar
      */
-    public void startedMoving(int key) {
-        if (key == 32) {
-            this.moving = true;
-        }
+    public void startedMoving() {
+        this.moving = true;
     }
 
     /**
