@@ -10,6 +10,8 @@ package items;
 public class Block extends Object {
     private int type;
     private boolean alive;
+    private int i;
+    private int j;
 
     /**
      * Constructor Block:
@@ -52,5 +54,32 @@ public class Block extends Object {
      */
     public void kill() {
         this.alive = false;
+    }
+
+    /**
+     * getMatrixI
+     * @return posición I del bloque en la matriz de bloques.
+     */
+    public int getMatrixI() {
+        return this.i;
+    }
+
+    /**
+     * getMatrixJ:
+     * @return posición J del bloque en la matrix de bloques.
+     */
+    public int getMatrixJ() {
+        return this.j;
+    }
+
+    /**
+     * setMatrixId:
+     * Establece la ubicación i,j del bloque dentro de la matriz
+     * @param i posición I
+     * @param j posición J
+     */
+    public void setMatrixId(int i, int j) {
+        this.i = i;
+        this.j = j;
     }
 }

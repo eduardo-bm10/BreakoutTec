@@ -44,7 +44,7 @@ public class Breakout extends JPanel implements KeyListener {
 
         this.window.add(this);
         this.window.addKeyListener(this);
-        this.setBackground(Color.DARK_GRAY);
+        this.setBackground(Color.BLACK);
         this.setVisible(true);
 
         this.running = true;
@@ -78,8 +78,8 @@ public class Breakout extends JPanel implements KeyListener {
         this.blocks = new ArrayList<>();
 
         int blockType;
-        for (int i = 0; i < 8; i++) {
-            switch (i) {
+        for (int j = 0; j < 8; j++) {
+            switch (j) {
                 case 0:
                 case 1:
                     blockType = 1;
@@ -97,8 +97,9 @@ public class Breakout extends JPanel implements KeyListener {
                 default:
                     blockType = 4;
             }
-            for (int p = 0; p < 14; p++) {
-                Block b = new Block(5 + 88*p, 90 + 25*i, 83, 20, blockType);
+            for (int i = 0; i < 14; i++) {
+                Block b = new Block(5 + 88*i, 90 + 25*j, 83, 20, blockType);
+                b.setMatrixId(i+1, j+1);
                 this.blocks.add(b);
             }
         }
