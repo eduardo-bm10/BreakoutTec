@@ -74,7 +74,7 @@ public class Breakout extends JPanel implements KeyListener {
      */
     private void initObjects(int initX, int initY) {
         this.bar = new Bar(initX, initY, 100, 10);
-        this.ball = new Ball(initX + 50, initY - 10, 10);
+        this.ball = new Ball(initX, initY, 10);
         this.blocks = new ArrayList<>();
 
         int blockType;
@@ -98,7 +98,7 @@ public class Breakout extends JPanel implements KeyListener {
                     blockType = 4;
             }
             for (int i = 0; i < 14; i++) {
-                Block b = new Block(5 + 88*i, 90 + 25*j, 83, 20, blockType);
+                Block b = new Block(5 + ((this.window.getWidth()-10)/14)*i, 90 + 25*j, 83, 20, blockType);
                 b.setMatrixId(i+1, j+1);
                 this.blocks.add(b);
             }
@@ -140,10 +140,38 @@ public class Breakout extends JPanel implements KeyListener {
     public void collideBallBar(Ball b1, Bar b2) {
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
-        r1.setBounds(b1.getX(), b1.getY(), b1.getWidth(), b1.getHeight());
-        r2.setBounds(b2.getX(), b2.getY(), b2.getWidth(), b2.getHeight());
-        if (r1.intersects(r2)) {
+        r1.setBounds((int) b1.getX(), (int) b1.getY(), (int) b1.getWidth(), (int) b1.getHeight());
+        r2.setBounds((int) b2.getX(), (int) b2.getY(), (int) b2.getWidth(), (int) b2.getHeight());
+        double barDiv = b2.getWidth()/6;
+        if (r1.intersectsLine(r2.getX(),r2.getY(),r2.getX() + barDiv,r2.getY())) {
+            b1.setRight(false);
             b1.setUp(true);
+            b1.setAngle(Math.PI/6);
+        }
+        else if (r1.intersectsLine(r2.getX() + barDiv,r2.getY(),r2.getX() + 2*barDiv,r2.getY())) {
+            b1.setRight(false);
+            b1.setUp(true);
+            b1.setAngle(Math.PI/4);
+        }
+        else if (r1.intersectsLine(r2.getX() + 2*barDiv,r2.getY(),r2.getX() + 3*barDiv,r2.getY())) {
+            b1.setRight(false);
+            b1.setUp(true);
+            b1.setAngle(Math.PI/3);
+        }
+        else if (r1.intersectsLine(r2.getX() + 3*barDiv,r2.getY(),r2.getX() + 4*barDiv,r2.getY())) {
+            b1.setRight(true);
+            b1.setUp(true);
+            b1.setAngle(Math.PI/3);
+        }
+        else if (r1.intersectsLine(r2.getX() + 4*barDiv,r2.getY(),r2.getX() + 5*barDiv,r2.getY())) {
+            b1.setRight(true);
+            b1.setUp(true);
+            b1.setAngle(Math.PI/4);
+        }
+        else if (r1.intersectsLine(r2.getX() + 5*barDiv,r2.getY(),r2.getX() + 6*barDiv,r2.getY())) {
+            b1.setRight(true);
+            b1.setUp(true);
+            b1.setAngle(Math.PI/6);
         }
     }
 
@@ -157,31 +185,35 @@ public class Breakout extends JPanel implements KeyListener {
     private void collideBallBlock(Ball b1, ArrayList<Block> blocks) {
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
-        r1.setBounds(b1.getX(), b1.getY(), b1.getWidth(), b1.getHeight());
+        r1.setBounds((int) b1.getX(), (int) b1.getY(), (int) b1.getWidth(), (int) b1.getHeight());
         for (Block b : blocks) {
-            r2.setBounds(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+            r2.setBounds((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight());
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
                 b.kill();
                 points++;
+                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
                 b.kill();
                 points++;
+                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
                 b.kill();
                 points++;
+                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
                 b.kill();
                 points++;
+                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
         }
@@ -291,10 +323,10 @@ public class Breakout extends JPanel implements KeyListener {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.blue);
-        g2d.fill3DRect(this.bar.getX(), this.bar.getY(), this.bar.getWidth(), this.bar.getHeight(),true);
+        g2d.fill3DRect((int) this.bar.getX(), (int) this.bar.getY(), (int) this.bar.getWidth(), (int) this.bar.getHeight(),true);
 
         g2d.setColor(Color.white);
-        g2d.fillOval(this.ball.getX(), this.ball.getY(), this.ball.getWidth(), this.bar.getHeight());
+        g2d.fillOval((int) this.ball.getX(), (int) this.ball.getY(), (int) this.ball.getWidth(), (int) this.bar.getHeight());
 
         if (lives == 0) {
             g2d.drawString("Game over", this.window.getWidth() / 2, this.window.getHeight() / 2);
@@ -314,7 +346,7 @@ public class Breakout extends JPanel implements KeyListener {
                 g2d.setColor(Color.GREEN);
             }
             if (b.getAlive()) {
-                g2d.fill3DRect(b.getX(), b.getY(), b.getWidth(), b.getHeight(), true);
+                g2d.fill3DRect((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight(), true);
             }
         }
     }

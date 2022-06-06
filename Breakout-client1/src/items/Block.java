@@ -23,7 +23,7 @@ public class Block extends Object {
      * @param type tipo de bloque (rojo, naranja, amarillo o verde).
      * @author Eduardo Bolívar
      */
-    public Block(int x, int y, int width, int height, int type) {
+    public Block(double x, double y, int width, int height, int type) {
         super(x,y,width,height);
         this.type = type;
         this.alive = true;

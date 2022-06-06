@@ -1,6 +1,7 @@
 package items;
 
 import game.Breakout;
+import java.lang.Math;
 
 /**
  * Clase Ball:
@@ -11,6 +12,7 @@ import game.Breakout;
  */
 public class Ball extends Object {
     private boolean moving, right, up;
+    private double angle;
 
     /**
      * Constructor Ball:
@@ -20,8 +22,8 @@ public class Ball extends Object {
      * @param diameter diamétro de la bola
      * @author Eduardo Bolívar
      */
-    public Ball(int x, int y, int diameter) {
-        super(x, y, diameter, diameter);
+    public Ball(double x, double y, int diameter) {
+        super(x - (diameter/2), y - 10, diameter, diameter);
         this.moving = false;
         this.right = true;
         this.up = true;
@@ -34,7 +36,7 @@ public class Ball extends Object {
      * @param barY posición y de la barra
      * @author Eduardo Bolívar
      */
-    private void restartPosition(int barX, int barY) {
+    private void restartPosition(double barX, double barY) {
         this.x = barX;
         this.y = barY;
         this.moving = false;
@@ -60,12 +62,12 @@ public class Ball extends Object {
      * @param barY posición y de la barra.
      * @author Eduardo Bolívar
      */
-    public void update_ball(int barX, int barY) {
-        int speed = 5;
+    public void update_ball(double barX, double barY) {
+        int speed = 3;
         if (this.moving) {
             if (right && up) {
-                this.x = this.x + speed;
-                this.y = this.y - speed;
+                this.x = this.x + speed*Math.cos(this.angle);
+                this.y = this.y - speed*Math.sin(this.angle);
                 if (this.x >= 1230) {
                     this.right = false;
                 }
@@ -74,8 +76,8 @@ public class Ball extends Object {
                 }
             }
             else if (!right && up) {
-                this.x = this.x - speed;
-                this.y = this.y - speed;
+                this.x = this.x - speed*Math.cos(this.angle);
+                this.y = this.y - speed*Math.sin(this.angle);
                 if (this.x <= 0) {
                     this.right = true;
                 }
@@ -84,8 +86,8 @@ public class Ball extends Object {
                 }
             }
             else if (right && !up) {
-                this.x = this.x + speed;
-                this.y = this.y + speed;
+                this.x = this.x + speed*Math.cos(this.angle);
+                this.y = this.y + speed*Math.sin(this.angle);
                 if (this.x >= 1230) {
                     this.right = false;
                 }
@@ -94,8 +96,8 @@ public class Ball extends Object {
                 }
             }
             else if (!right && !up) {
-                this.x = this.x - speed;
-                this.y = this.y + speed;
+                this.x = this.x - speed*Math.cos(this.angle);
+                this.y = this.y + speed*Math.sin(this.angle);
                 if (this.x <= 0) {
                     this.right = true;
                 }
@@ -128,6 +130,10 @@ public class Ball extends Object {
      */
     public void setUp(boolean up) {
         this.up = up;
+    }
+
+    public void setAngle(double a) {
+        this.angle = a;
     }
 
 }

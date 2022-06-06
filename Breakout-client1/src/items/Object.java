@@ -7,8 +7,8 @@ package items;
  */
 public class Object
 {
-    protected int x;
-    protected int y;
+    protected double x;
+    protected double y;
     protected int width;
     protected int height;
 
@@ -21,7 +21,7 @@ public class Object
      * @param height altura inicial del objeto.
      * @author Eduardo Bolívar
      */
-    public Object(int x, int y, int width, int height) {
+    public Object(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -33,7 +33,7 @@ public class Object
      * @return la posición x actual del objeto.
      * @author Eduardo Bolívar
      */
-    public int getX() {
+    public double getX() {
         return this.x;
     }
 
@@ -42,7 +42,7 @@ public class Object
      * @return la posición en y actual del objeto.
      * @author Eduardo Bolívar
      */
-    public int getY() {
+    public double getY() {
         return this.y;
     }
 
@@ -51,7 +51,7 @@ public class Object
      * @return la anchura del objeto.
      * @author Eduardo Bolívar
      */
-    public int getWidth() {
+    public double getWidth() {
         return this.width;
     }
 
@@ -60,7 +60,7 @@ public class Object
      * @return la altura del objeto.
      * @author Eduardo Bolívar
      */
-    public int getHeight() {
+    public double getHeight() {
         return this.height;
     }
 }

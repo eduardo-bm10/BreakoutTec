@@ -20,7 +20,7 @@ public class Bar extends Object {
      * @param width anchura de la barra
      * @param height altura de la barra
      */
-    public Bar(int x, int y, int width, int height) {
+    public Bar(double x, double y, int width, int height) {
         super(x - (width/2), y, width, height);
         this.right = false;
         this.left = false;
