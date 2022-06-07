@@ -63,4 +63,11 @@ public class Object
     public double getHeight() {
         return this.height;
     }
+
+    public void restart(double x, double y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 }

@@ -47,6 +47,10 @@ public class Block extends Object {
         return this.alive;
     }
 
+    public void activate() {
+        this.alive = true;
+    }
+
     /**
      * kill:
      * Inactiva un bloque, por lo tanto, la bola no podrá rebotar en él ni será visible en pantalla.

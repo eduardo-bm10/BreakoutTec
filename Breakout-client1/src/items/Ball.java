@@ -12,7 +12,7 @@ import java.lang.Math;
  */
 public class Ball extends Object {
     private boolean moving, right, up;
-    private double angle;
+    private double speed, angle;
 
     /**
      * Constructor Ball:
@@ -23,26 +23,27 @@ public class Ball extends Object {
      * @author Eduardo Bolívar
      */
     public Ball(double x, double y, int diameter) {
-        super(x - (diameter/2), y - 10, diameter, diameter);
+        super(x, y, diameter, diameter);
         this.moving = false;
         this.right = true;
         this.up = true;
+        this.speed = 5;
     }
 
     /**
      * restartPosition:
      * Devuelve la bola a la posición en la que se encuentra la barra y reinicia su movimiento
-     * @param barX posición x de la barra
-     * @param barY posición y de la barra
+     * @param x posición x de la barra
+     * @param y posición y de la barra
+     * @param width nueva anchura de la bola
+     * @param height nueva altura de la bola
      * @author Eduardo Bolívar
      */
-    private void restartPosition(double barX, double barY) {
-        this.x = barX;
-        this.y = barY;
+    @Override
+    public void restart(double x, double y, int width, int height) {
+        super.restart(x,y,width,height);
         this.moving = false;
-        this.right = true;
         this.up = true;
-        Breakout.removeLife();
     }
 
     /**
@@ -63,7 +64,6 @@ public class Ball extends Object {
      * @author Eduardo Bolívar
      */
     public void update_ball(double barX, double barY) {
-        int speed = 3;
         if (this.moving) {
             if (right && up) {
                 this.x = this.x + speed*Math.cos(this.angle);
@@ -91,8 +91,9 @@ public class Ball extends Object {
                 if (this.x >= 1230) {
                     this.right = false;
                 }
-                if (this.y >= barY + 15) {
-                    this.restartPosition(barX, barY);
+                if (this.y >= 720) {
+                    this.restart(barX, barY, this.width, this.height);
+                    Breakout.removeLife();
                 }
             }
             else if (!right && !up) {
@@ -101,8 +102,9 @@ public class Ball extends Object {
                 if (this.x <= 0) {
                     this.right = true;
                 }
-                if (this.y >= barY + 15) {
-                    this.restartPosition(barX,barY);
+                if (this.y >= 720) {
+                    this.restart(barX,barY, this.width, this.height);
+                    Breakout.removeLife();
                 }
             }
         }
@@ -110,6 +112,14 @@ public class Ball extends Object {
             this.x = barX + 40;
             this.y = barY - 10;
         }
+    }
+
+    public void accelerate() {
+        this.speed = this.speed + 2;
+    }
+
+    public void resetSpeed() {
+        this.speed = 5;
     }
 
     /**

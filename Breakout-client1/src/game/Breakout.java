@@ -17,15 +17,21 @@ import items.Block;
  * @author Eduardo Bolívar
  */
 public class Breakout extends JPanel implements KeyListener {
-    private static int points;
-    private static int lives;
+    public boolean gameOver;
+    protected static int points;
+    protected static int lives;
+    protected static int level;
+    protected Bar bar;
+    protected Ball ball;
     private JFrame window;
-    private Bar bar;
-    private Ball ball;
     private ArrayList<Block> blocks;
     private boolean running;
+    private JLabel title;
+    private JLabel gameoverText;
     private JLabel pointsText;
     private JLabel livesText;
+    private JLabel levelText;
+
 
     /**
      * Constructor:
@@ -34,20 +40,33 @@ public class Breakout extends JPanel implements KeyListener {
      */
     public Breakout() {
         this.initWindow();
-        int initX = this.window.getSize().width / 2;
-        int initY = this.window.getSize().height - 80;
         Breakout.points = 0;
         Breakout.lives = 3;
-
-        this.initObjects(initX, initY);
+        Breakout.level = 1;
+        this.initObjects(this.window.getSize().width / 2, this.window.getSize().height - 80);
         this.initText();
-
         this.window.add(this);
         this.window.addKeyListener(this);
+        this.setLayout(null);
         this.setBackground(Color.BLACK);
         this.setVisible(true);
-
+        this.gameOver = false;
         this.running = true;
+    }
+
+    private void resetGame() {
+        if (this.gameOver) {
+            points = 0;
+            level = 1;
+            this.ball.resetSpeed();
+        }
+        lives = 3;
+        this.bar.restart(this.window.getSize().width/2 - 50, this.window.getSize().height - 80, 100, 10);
+        this.ball.restart(this.bar.getX(), this.bar.getY(), 10, 10);
+        for (Block b : this.blocks) {
+            b.activate();
+        }
+        this.gameOver = false;
     }
 
     /**
@@ -73,13 +92,13 @@ public class Breakout extends JPanel implements KeyListener {
      * @author Eduardo Bolívar
      */
     private void initObjects(int initX, int initY) {
-        this.bar = new Bar(initX, initY, 100, 10);
-        this.ball = new Ball(initX, initY, 10);
+        this.bar = new Bar(initX - 50, initY, 100, 10);
+        this.ball = new Ball(initX - 5, initY - 10, 10);
         this.blocks = new ArrayList<>();
 
         int blockType;
-        for (int j = 0; j < 8; j++) {
-            switch (j) {
+        for (int i = 0; i < 8; i++) {
+            switch (i) {
                 case 0:
                 case 1:
                     blockType = 1;
@@ -97,8 +116,8 @@ public class Breakout extends JPanel implements KeyListener {
                 default:
                     blockType = 4;
             }
-            for (int i = 0; i < 14; i++) {
-                Block b = new Block(5 + ((this.window.getWidth()-10)/14)*i, 90 + 25*j, 83, 20, blockType);
+            for (int j = 0; j < 14; j++) {
+                Block b = new Block(5 + ((this.window.getWidth()-10)/14)*j, 90 + 25*i, 83, 20, blockType);
                 b.setMatrixId(i+1, j+1);
                 this.blocks.add(b);
             }
@@ -106,19 +125,35 @@ public class Breakout extends JPanel implements KeyListener {
     }
 
     public void initText() {
+        this.title = new JLabel("PRESS 'SPACE' TO START");
+        this.title.setFont(new Font("Times",Font.BOLD,30));
+        this.title.setBounds(this.window.getWidth()/2 - 200, this.window.getHeight()/2 - 150, 500, 300);
+        this.title.setForeground(Color.white);
+
+        this.gameoverText = new JLabel("");
+        this.gameoverText.setFont(new Font("Times", Font.BOLD, 30));
+        this.gameoverText.setBounds(this.window.getWidth()/2 - 100, this.window.getHeight()/2 - 150, 500, 300);
+
         this.pointsText = new JLabel();
-        pointsText.setSize(100,100);
-        pointsText.setLocation(50,50);
+        this.pointsText.setFont(new Font("Times", Font.BOLD, 20));
+        this.pointsText.setBounds(50,30,150,20);
         pointsText.setForeground(Color.WHITE);
 
         this.livesText = new JLabel();
-        this.livesText.setSize(100,100);
-        this.livesText.setLocation(250,50);
+        this.livesText.setFont(new Font("Times", Font.BOLD, 20));
+        this.livesText.setBounds(this.window.getWidth()/2-75,30, 150, 20);
         this.livesText.setForeground(Color.WHITE);
 
+        this.levelText = new JLabel();
+        this.levelText.setFont(new Font("Times", Font.BOLD, 20));
+        this.levelText.setBounds(1100,30,150,20);
+        this.levelText.setForeground(Color.WHITE);
 
+        this.add(title);
+        this.add(gameoverText);
         this.add(pointsText);
         this.add(livesText);
+        this.add(levelText);
     }
 
     public static void removeLife() {
@@ -126,8 +161,12 @@ public class Breakout extends JPanel implements KeyListener {
     }
 
     public void updateText() {
-        pointsText.setText("Puntos: " + Breakout.points);
-        livesText.setText("Vidas: " + Breakout.lives);
+        pointsText.setText("SCORE: " + Breakout.points);
+        livesText.setText("BALLS: " + Breakout.lives + "/3");
+        levelText.setText("LEVEL: " + Breakout.level);
+        if (!this.gameOver) {
+            this.gameoverText.setText("");
+        }
     }
 
     /**
@@ -182,7 +221,7 @@ public class Breakout extends JPanel implements KeyListener {
      * @param blocks arreglo de bloques del juego.
      * @author Eduardo Bolívar
      */
-    private void collideBallBlock(Ball b1, ArrayList<Block> blocks) {
+    public void collideBallBlock(Ball b1, ArrayList<Block> blocks) {
         Rectangle r1 = new Rectangle();
         Rectangle r2 = new Rectangle();
         r1.setBounds((int) b1.getX(), (int) b1.getY(), (int) b1.getWidth(), (int) b1.getHeight());
@@ -192,42 +231,27 @@ public class Breakout extends JPanel implements KeyListener {
                 b1.setUp(false);
                 b.kill();
                 points++;
-                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
                 b.kill();
                 points++;
-                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
                 b.kill();
                 points++;
-                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
                 b.kill();
                 points++;
-                System.out.printf("Block: [%d,%d]\n", b.getMatrixI(), b.getMatrixJ());
                 break;
             }
         }
-    }
-
-    /**
-     * isRunning:
-     * Informa del estado de ejecución del juego, si está ejecutándose o no.
-     * @return true si el juego está en ejecución. False si la ejecución termina.
-     * @author Eduardo Bolívar
-     *
-     */
-    public boolean isRunning() {
-        return this.running;
     }
 
     /**
@@ -236,9 +260,32 @@ public class Breakout extends JPanel implements KeyListener {
      * Llama a los métodos collideBallBar y collideBallBlock.
      * @author Eduardo Bolívar
      */
-    private void checkCollisions() {
+    public void checkCollisions() {
         collideBallBar(this.ball, this.bar);
         collideBallBlock(this.ball, this.blocks);
+    }
+
+    public void checkNextLevel() {
+        int remaining = getRemainingBlocks();
+        if (remaining == 0) {
+            nextLevel();
+        }
+    }
+
+    public int getRemainingBlocks() {
+        int count = 0;
+        for (Block b : this.blocks) {
+            if (b.getAlive()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void nextLevel() {
+        level++;
+        this.ball.accelerate();
+        resetGame();
     }
 
     /**
@@ -249,13 +296,13 @@ public class Breakout extends JPanel implements KeyListener {
      */
     public void update() {
         if (lives == 0) {
-            this.gameOver();
+            this.gameOver = true;
         }
         this.bar.update_bar();
         this.ball.update_ball(this.bar.getX(), this.bar.getY());
-
-        this.updateText();
         this.checkCollisions();
+        this.checkNextLevel();
+        this.updateText();
     }
 
     /**
@@ -267,12 +314,32 @@ public class Breakout extends JPanel implements KeyListener {
         this.window.repaint();
     }
 
-    public void gameOver() {
-        this.running = false;
+    public boolean isGameOver() {
+        return this.gameOver;
+    }
+
+    public void showGameOverMessage() throws InterruptedException {
+        this.gameoverText.setText("GAME OVER");
+        this.gameoverText.setForeground(Color.red);
+        Thread.sleep(800);
+        this.gameoverText.setText("SCORE: " + Breakout.points);
+        this.gameoverText.setForeground(Color.yellow);
+        Thread.sleep(800);
     }
 
     public void close() {
         this.running = false;
+    }
+
+    /**
+     * isRunning:
+     * Informa del estado de ejecución del juego, si está ejecutándose o no.
+     * @return true si el juego está en ejecución. False si la ejecución termina.
+     * @author Eduardo Bolívar
+     *
+     */
+    public boolean isRunning() {
+        return this.running;
     }
 
     @Override
@@ -293,6 +360,10 @@ public class Breakout extends JPanel implements KeyListener {
         this.bar.move(e.getKeyCode());
         if (e.getKeyCode() == 32) {
             this.ball.startedMoving();
+            this.title.setText("");
+        }
+        else if (e.getKeyCode() == 10 && this.gameOver) {
+            resetGame();
         }
         else if (e.getKeyCode() == 27) {
             this.close();
@@ -327,10 +398,6 @@ public class Breakout extends JPanel implements KeyListener {
 
         g2d.setColor(Color.white);
         g2d.fillOval((int) this.ball.getX(), (int) this.ball.getY(), (int) this.ball.getWidth(), (int) this.bar.getHeight());
-
-        if (lives == 0) {
-            g2d.drawString("Game over", this.window.getWidth() / 2, this.window.getHeight() / 2);
-        }
 
         for (Block b : this.blocks) {
             if (b.getType() == 1) {

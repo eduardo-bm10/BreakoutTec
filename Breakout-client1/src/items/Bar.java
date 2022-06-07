@@ -21,7 +21,7 @@ public class Bar extends Object {
      * @param height altura de la barra
      */
     public Bar(double x, double y, int width, int height) {
-        super(x - (width/2), y, width, height);
+        super(x, y, width, height);
         this.right = false;
         this.left = false;
     }
@@ -34,13 +34,13 @@ public class Bar extends Object {
      */
     public void update_bar() {
         if (right) {
-            this.x = this.x + 10;
+            this.x = this.x + 6;
             if (this.x >= (1250 - this.width)) {
                 this.x = 1250 - this.width;
             }
         }
         else if (left) {
-            this.x = this.x - 10;
+            this.x = this.x - 6;
             if (this.x <= 0) {
                 this.x = 0;
             }
