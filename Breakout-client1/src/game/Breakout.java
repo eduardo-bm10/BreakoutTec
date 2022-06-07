@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import items.Ball;
 import items.Bar;
@@ -27,7 +28,7 @@ public class Breakout extends JPanel implements KeyListener {
     private ArrayList<Block> blocks;
     private boolean running;
     private JLabel title;
-    private JLabel gameoverText;
+    private JLabel gameOverText;
     private JLabel pointsText;
     private JLabel livesText;
     private JLabel levelText;
@@ -55,16 +56,16 @@ public class Breakout extends JPanel implements KeyListener {
     }
 
     private void resetGame() {
+        lives = 3;
+        this.bar.restart(this.window.getSize().width/2 - 50, this.window.getSize().height - 80, 140, 10);
+        this.ball.restart(this.bar.getX(), this.bar.getY(), 10, 10);
+        for (Block b : this.blocks) {
+            b.activate();
+        }
         if (this.gameOver) {
             points = 0;
             level = 1;
             this.ball.resetSpeed();
-        }
-        lives = 3;
-        this.bar.restart(this.window.getSize().width/2 - 50, this.window.getSize().height - 80, 100, 10);
-        this.ball.restart(this.bar.getX(), this.bar.getY(), 10, 10);
-        for (Block b : this.blocks) {
-            b.activate();
         }
         this.gameOver = false;
     }
@@ -92,8 +93,8 @@ public class Breakout extends JPanel implements KeyListener {
      * @author Eduardo Bolívar
      */
     private void initObjects(int initX, int initY) {
-        this.bar = new Bar(initX - 50, initY, 100, 10);
-        this.ball = new Ball(initX - 5, initY - 10, 10);
+        this.bar = new Bar(initX, initY, 140, 10);
+        this.ball = new Ball(initX, initY - 10, 10);
         this.blocks = new ArrayList<>();
 
         int blockType;
@@ -130,9 +131,9 @@ public class Breakout extends JPanel implements KeyListener {
         this.title.setBounds(this.window.getWidth()/2 - 200, this.window.getHeight()/2 - 150, 500, 300);
         this.title.setForeground(Color.white);
 
-        this.gameoverText = new JLabel("");
-        this.gameoverText.setFont(new Font("Times", Font.BOLD, 30));
-        this.gameoverText.setBounds(this.window.getWidth()/2 - 100, this.window.getHeight()/2 - 150, 500, 300);
+        this.gameOverText = new JLabel("");
+        this.gameOverText.setFont(new Font("Times", Font.BOLD, 30));
+        this.gameOverText.setBounds(this.window.getWidth()/2 - 100, this.window.getHeight()/2 - 150, 500, 300);
 
         this.pointsText = new JLabel();
         this.pointsText.setFont(new Font("Times", Font.BOLD, 20));
@@ -150,7 +151,7 @@ public class Breakout extends JPanel implements KeyListener {
         this.levelText.setForeground(Color.WHITE);
 
         this.add(title);
-        this.add(gameoverText);
+        this.add(gameOverText);
         this.add(pointsText);
         this.add(livesText);
         this.add(levelText);
@@ -165,7 +166,7 @@ public class Breakout extends JPanel implements KeyListener {
         livesText.setText("BALLS: " + Breakout.lives + "/3");
         levelText.setText("LEVEL: " + Breakout.level);
         if (!this.gameOver) {
-            this.gameoverText.setText("");
+            this.gameOverText.setText("");
         }
     }
 
@@ -288,6 +289,10 @@ public class Breakout extends JPanel implements KeyListener {
         resetGame();
     }
 
+    public void addBall() {
+
+    }
+
     /**
      * update:
      * Actualiza constantemente los objetos del juego.
@@ -299,7 +304,7 @@ public class Breakout extends JPanel implements KeyListener {
             this.gameOver = true;
         }
         this.bar.update_bar();
-        this.ball.update_ball(this.bar.getX(), this.bar.getY());
+        this.ball.update_ball(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
         this.checkCollisions();
         this.checkNextLevel();
         this.updateText();
@@ -319,17 +324,23 @@ public class Breakout extends JPanel implements KeyListener {
     }
 
     public void showGameOverMessage() throws InterruptedException {
-        this.gameoverText.setText("GAME OVER");
-        this.gameoverText.setForeground(Color.red);
+        this.gameOverText.setText("GAME OVER");
+        this.gameOverText.setForeground(Color.red);
         Thread.sleep(800);
-        this.gameoverText.setText("SCORE: " + Breakout.points);
-        this.gameoverText.setForeground(Color.yellow);
+        this.gameOverText.setText("SCORE: " + Breakout.points);
+        this.gameOverText.setForeground(Color.yellow);
         Thread.sleep(800);
     }
 
-    public void close() {
-        this.running = false;
+    private void modBarSize(int action) {
+        if (action == 0 && this.bar.getWidth() >= 70) {
+            this.bar.setWidth(this.bar.getWidth()/2);
+        }
+        else if (action == 1 && this.bar.getWidth() <= 280) {
+            this.bar.setWidth(2*this.bar.getWidth());
+        }
     }
+
 
     /**
      * isRunning:
@@ -362,11 +373,12 @@ public class Breakout extends JPanel implements KeyListener {
             this.ball.startedMoving();
             this.title.setText("");
         }
-        else if (e.getKeyCode() == 10 && this.gameOver) {
-            resetGame();
+        else if (e.getKeyCode() == 10) {
+            //resetGame();
+            modBarSize(1);
         }
         else if (e.getKeyCode() == 27) {
-            this.close();
+            modBarSize(0);
         }
     }
 
@@ -397,7 +409,7 @@ public class Breakout extends JPanel implements KeyListener {
         g2d.fill3DRect((int) this.bar.getX(), (int) this.bar.getY(), (int) this.bar.getWidth(), (int) this.bar.getHeight(),true);
 
         g2d.setColor(Color.white);
-        g2d.fillOval((int) this.ball.getX(), (int) this.ball.getY(), (int) this.ball.getWidth(), (int) this.bar.getHeight());
+        g2d.fillOval((int) this.ball.getX(), (int) this.ball.getY(), (int) this.ball.getWidth(), (int) this.ball.getHeight());
 
         for (Block b : this.blocks) {
             if (b.getType() == 1) {

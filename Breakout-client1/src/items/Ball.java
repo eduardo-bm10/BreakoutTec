@@ -23,7 +23,7 @@ public class Ball extends Object {
      * @author Eduardo Bolívar
      */
     public Ball(double x, double y, int diameter) {
-        super(x, y, diameter, diameter);
+        super(x - (diameter/2), y, diameter, diameter);
         this.moving = false;
         this.right = true;
         this.up = true;
@@ -63,7 +63,7 @@ public class Ball extends Object {
      * @param barY posición y de la barra.
      * @author Eduardo Bolívar
      */
-    public void update_ball(double barX, double barY) {
+    public void update_ball(double barX, double barY, double barWidth) {
         if (this.moving) {
             if (right && up) {
                 this.x = this.x + speed*Math.cos(this.angle);
@@ -103,19 +103,19 @@ public class Ball extends Object {
                     this.right = true;
                 }
                 if (this.y >= 720) {
-                    this.restart(barX,barY, this.width, this.height);
+                    this.restart(barX, barY, this.width, this.height);
                     Breakout.removeLife();
                 }
             }
         }
         else {
-            this.x = barX + 40;
+            this.x = barX + (barWidth/2) - 10;
             this.y = barY - 10;
         }
     }
 
-    public void accelerate() {
-        this.speed = this.speed + 2;
+    public double accelerate() {
+        return this.speed + 2;
     }
 
     public void resetSpeed() {

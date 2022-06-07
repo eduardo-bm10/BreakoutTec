@@ -55,6 +55,10 @@ public class Object
         return this.width;
     }
 
+    public void setWidth(double width) {
+        this.width = (int) width;
+    }
+
     /**
      * getHeight:
      * @return la altura del objeto.
