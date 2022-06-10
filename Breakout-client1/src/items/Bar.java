@@ -34,13 +34,13 @@ public class Bar extends Object {
      */
     public void update_bar() {
         if (right) {
-            this.x = this.x + 6;
+            this.x = this.x + 8;
             if (this.x >= (1250 - this.width)) {
                 this.x = 1250 - this.width;
             }
         }
         else if (left) {
-            this.x = this.x - 6;
+            this.x = this.x - 8;
             if (this.x <= 0) {
                 this.x = 0;
             }

@@ -149,26 +149,26 @@ public class Breakout extends JPanel implements KeyListener {
         this.title = new JLabel("PRESS 'SPACE' TO START");
         this.title.setFont(new Font("Times",Font.BOLD,30));
         this.title.setBounds(this.window.getWidth()/2 - 200, this.window.getHeight()/2 - 150, 500, 300);
-        this.title.setForeground(Color.white);
+        this.title.setForeground(Color.lightGray);
 
         this.gameOverText = new JLabel("");
         this.gameOverText.setFont(new Font("Times", Font.BOLD, 30));
         this.gameOverText.setBounds(this.window.getWidth()/2 - 100, this.window.getHeight()/2 - 150, 500, 300);
 
         this.pointsText = new JLabel();
-        this.pointsText.setFont(new Font("Times", Font.BOLD, 20));
-        this.pointsText.setBounds(50,30,150,20);
-        pointsText.setForeground(Color.WHITE);
+        this.pointsText.setFont(new Font("Times", Font.BOLD, 25));
+        this.pointsText.setBounds(50,30,160,25);
+        pointsText.setForeground(Color.lightGray);
 
         this.livesText = new JLabel();
-        this.livesText.setFont(new Font("Times", Font.BOLD, 20));
-        this.livesText.setBounds(this.window.getWidth()/2-75,30, 150, 20);
-        this.livesText.setForeground(Color.WHITE);
+        this.livesText.setFont(new Font("Times", Font.BOLD, 25));
+        this.livesText.setBounds(this.window.getWidth()/2-80,30, 160, 25);
+        this.livesText.setForeground(Color.lightGray);
 
         this.levelText = new JLabel();
-        this.levelText.setFont(new Font("Times", Font.BOLD, 20));
-        this.levelText.setBounds(1100,30,150,20);
-        this.levelText.setForeground(Color.WHITE);
+        this.levelText.setFont(new Font("Times", Font.BOLD, 25));
+        this.levelText.setBounds(1100,30,160,25);
+        this.levelText.setForeground(Color.lightGray);
 
         this.add(title);
         this.add(gameOverText);
@@ -360,32 +360,6 @@ public class Breakout extends JPanel implements KeyListener {
     }
 
     /**
-     * addBall:
-     * Añade una bola al vector de bolas y asigna un ID a esta nueva bola.
-     * @author Eduardo Bolívar
-     *
-     */
-    public void addBall() {
-        Ball.id_0++;
-        this.ballVector.add(new Ball(this.bar.getX() + (this.bar.getWidth()/2), this.bar.getY(), 10));
-    }
-
-    /**
-     * removeBall:
-     * Elimina la bola especificada por el parámetro, y ajusta los índices del resto de bolas para que coincidan con el orden del vector.
-     * Lo anterior para facilitar el acceso.
-     * @param a el índice de la bola a eliminar.
-     * @author Eduardo Bolívar
-     */
-    public void removeBall(int a) {
-        Ball.id_0--;
-        this.ballVector.remove(a);
-        for (int i = a; i < this.ballVector.size(); i++) {
-            this.ballVector.get(i).setId(this.ballVector.get(i).getId() - 1);
-        }
-    }
-
-    /**
      * update:
      * Actualiza constantemente los objetos del juego.
      * Actualiza la posición de la barra, la posición de la bola, y el estado de los bloques.
@@ -435,6 +409,7 @@ public class Breakout extends JPanel implements KeyListener {
         Thread.sleep(800);
     }
 
+    // Modificadores de juego
     /**
      * modBarSize:
      * Modifica el tamaño de la barra de juego.
@@ -447,6 +422,58 @@ public class Breakout extends JPanel implements KeyListener {
         }
         else if (action == 1 && this.bar.getWidth() <= 280) {
             this.bar.setWidth(2*this.bar.getWidth());
+        }
+    }
+
+    /**
+     * addBall:
+     * Añade una bola al vector de bolas y asigna un ID a esta nueva bola.
+     * @author Eduardo Bolívar
+     *
+     */
+    public void addBall() {
+        Ball.id_0++;
+        this.ballVector.add(new Ball(this.bar.getX() + (this.bar.getWidth()/2), this.bar.getY(), 10));
+    }
+
+    /**
+     * removeBall:
+     * Elimina la bola especificada por el parámetro, y ajusta los índices del resto de bolas para que coincidan con el orden del vector.
+     * Lo anterior para facilitar el acceso.
+     * @param a el índice de la bola a eliminar.
+     * @author Eduardo Bolívar
+     */
+    public void removeBall(int a) {
+        Ball.id_0--;
+        this.ballVector.remove(a);
+        for (int i = a; i < this.ballVector.size(); i++) {
+            this.ballVector.get(i).setId(this.ballVector.get(i).getId() - 1);
+        }
+    }
+
+    /**
+     * changeSpeed:
+     * Modifica la velocidad de las bolas.
+     * @param action bit que determina si se aumenta la velocidad o si disminuye.
+     * @author Eduardo Bolívar
+     */
+    public void changeSpeed(int action) {
+        if (action == 0 && Ball.accelerate() - 2 > 1) {
+            Ball.setSpeed(Ball.accelerate() - 4);
+        }
+        else if (action == 1 && Ball.accelerate() - 2 < 9) {
+            Ball.setSpeed(Ball.accelerate());
+        }
+    }
+
+    /**
+     * giveLife:
+     * Añade una vida al jugador.
+     * @author Eduardo Bolívar
+     */
+    public void giveLife() {
+        if (Breakout.lives < 3) {
+            Breakout.lives++;
         }
     }
 
@@ -476,7 +503,7 @@ public class Breakout extends JPanel implements KeyListener {
      * @param e the event to be processed.
      */
     @Override
-    public void keyPressed(KeyEvent e) {;
+    public void keyPressed(KeyEvent e) {
         this.bar.move(e.getKeyCode());
         if (e.getKeyCode() == 32) {
             Ball.startMoving();
@@ -485,8 +512,23 @@ public class Breakout extends JPanel implements KeyListener {
         else if (e.getKeyCode() == 10 && gameOver) {
             resetGame();
         }
-        else if (e.getKeyCode() == 27) {
+        else if (e.getKeyCode() == 38) {
+            modBarSize(1);
+        }
+        else if (e.getKeyCode() == 40) {
+            modBarSize(0);
+        }
+        else if (e.getKeyCode() == 102) {
+            changeSpeed(1);
+        }
+        else if (e.getKeyCode() == 100) {
+            changeSpeed(0);
+        }
+        else if (e.getKeyCode() == 101) {
             addBall();
+        }
+        else if (e.getKeyCode() == 96) {
+            giveLife();
         }
     }
 

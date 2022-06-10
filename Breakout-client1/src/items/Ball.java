@@ -134,7 +134,7 @@ public class Ball extends Object {
      * @return el valor sumado de velocidad.
      * @author Eduardo Bolívar
      */
-    public double accelerate() {
+    public static double accelerate() {
         return speed + 2;
     }
 
@@ -163,7 +163,7 @@ public class Ball extends Object {
      * @param sp la nueva velocidad para cada una de las bolas en juego.
      * @author Eduardo Bolívar
      */
-    public void setSpeed(double sp) {
+    public static void setSpeed(double sp) {
         speed = sp;
     }
 
