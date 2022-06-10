@@ -55,6 +55,12 @@ public class Object
         return this.width;
     }
 
+    /**
+     * setWidth:
+     * Permite actualizar la anchura del objeto.
+     * @param width la nueva anchura del objeto.
+     * @author Eduardo Bolívar
+     */
     public void setWidth(double width) {
         this.width = (int) width;
     }
@@ -68,6 +74,15 @@ public class Object
         return this.height;
     }
 
+    /**
+     * restart:
+     * Reinicia la posición y las dimensiones del objeto a las que tenía cuando inició la ejecución del programa.
+     * @param x la posición x inicial.
+     * @param y la posición y inicial.
+     * @param width la anchura inicial.
+     * @param height la altura inicial.
+     * @author Eduardo Bolívar
+     */
     public void restart(double x, double y, int width, int height) {
         this.x = x;
         this.y = y;

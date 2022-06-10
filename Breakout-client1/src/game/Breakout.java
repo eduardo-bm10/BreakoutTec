@@ -23,7 +23,7 @@ public class Breakout extends JPanel implements KeyListener {
     protected static int lives;
     protected static int level;
     protected Bar bar;
-    protected Ball ball;
+    protected Vector<Ball> ballVector;
     private JFrame window;
     private ArrayList<Block> blocks;
     private boolean running;
@@ -55,19 +55,32 @@ public class Breakout extends JPanel implements KeyListener {
         this.running = true;
     }
 
+    /**
+     * resetGame:
+     * Devuelve el juego a sus condiciones iniciales.
+     * Reestablece la cantidad de bolas en juego, la posición y tamaño de la barra, bloques, y vidas del jugador.
+     * Si es un reset por Game Over, la velocidad de la bola vuelve a la inicial, y los puntos acumulados se eliminan.
+     * Si es un reset por cambio de nivel, la velocidad de la bola aumenta y los puntos se mantienen.
+     * @author Eduardo Bolívar
+     */
     private void resetGame() {
-        lives = 3;
-        this.bar.restart(this.window.getSize().width/2 - 50, this.window.getSize().height - 80, 140, 10);
-        this.ball.restart(this.bar.getX(), this.bar.getY(), 10, 10);
-        for (Block b : this.blocks) {
-            b.activate();
-        }
+        this.ballVector.clear();
+        this.ballVector.add(new Ball(this.bar.getX(), this.bar.getY(), 10));
+        Ball.stopMoving();
         if (this.gameOver) {
             points = 0;
             level = 1;
-            this.ball.resetSpeed();
+            this.ballVector.firstElement().resetSpeed();
+            this.gameOver = false;
         }
-        this.gameOver = false;
+        else {
+            this.ballVector.firstElement().setSpeed(this.ballVector.firstElement().accelerate());
+        }
+        lives = 3;
+        this.bar.restart(this.window.getSize().width/2 - 50, this.window.getSize().height - 80, 140, 10);
+        for (Block b : this.blocks) {
+            b.activate();
+        }
     }
 
     /**
@@ -94,7 +107,8 @@ public class Breakout extends JPanel implements KeyListener {
      */
     private void initObjects(int initX, int initY) {
         this.bar = new Bar(initX, initY, 140, 10);
-        this.ball = new Ball(initX, initY - 10, 10);
+        this.ballVector = new Vector<>();
+        this.ballVector.add(new Ball(initX, initY - 10, 10));
         this.blocks = new ArrayList<>();
 
         int blockType;
@@ -125,6 +139,12 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * initText:
+     * Inicializa todos los mensajes visibles en pantalla.
+     * Inicializa las fuentes, localización en pantalla, tamaño y color de letra.
+     * @author Eduardo Bolívar
+     */
     public void initText() {
         this.title = new JLabel("PRESS 'SPACE' TO START");
         this.title.setFont(new Font("Times",Font.BOLD,30));
@@ -157,10 +177,21 @@ public class Breakout extends JPanel implements KeyListener {
         this.add(levelText);
     }
 
+    /**
+     * removeLife:
+     * Método estático que le resta una vida al jugador.
+     * @author Eduardo Bolívar
+     */
     public static void removeLife() {
         Breakout.lives--;
     }
 
+    /**
+     * updateText:
+     * Actualiza el texto en pantalla para mostrar los puntos, las vidas, y el nivel actual.
+     * En caso de Game Over, se muestra un mensaje de Game Over y los puntos conseguidos.
+     * @author Eduardo Bolívar
+     */
     public void updateText() {
         pointsText.setText("SCORE: " + Breakout.points);
         livesText.setText("BALLS: " + Breakout.lives + "/3");
@@ -262,10 +293,38 @@ public class Breakout extends JPanel implements KeyListener {
      * @author Eduardo Bolívar
      */
     public void checkCollisions() {
-        collideBallBar(this.ball, this.bar);
-        collideBallBlock(this.ball, this.blocks);
+        for (Ball b : this.ballVector) {
+            collideBallBar(b, this.bar);
+            collideBallBlock(b, this.blocks);
+        }
     }
 
+    /**
+     * checkBalls:
+     * Actualiza la posición y estado de cada una de las bolas en pantalla.
+     * Si una bola cae, llama a la función para eliminar una bola del vector, y resta una vida al jugador.
+     * @param x la posición x de la barra en caso de reiniciar la última bola.
+     * @param y la posición y de la barra en caso de reiniciar la última bola.
+     * @param w la anchura de la barra en caso de reiniciar la última bola.
+     * @author Eduardo Bolívar
+     */
+    public void checkBalls(double x, double y, double w) {
+        for (Ball b : this.ballVector) {
+            b.update_ball(x, y, w, this.ballVector.size());
+            if (b.getY() >= 720) {
+                removeLife();
+                removeBall(b.getId());
+                break;
+            }
+        }
+    }
+
+    /**
+     * checkNextLevel:
+     * Verifica si los bloques han sido destruidos.
+     * Si es así, se pasa al siguiente nivel.
+     * @author Eduardo Bolívar
+     */
     public void checkNextLevel() {
         int remaining = getRemainingBlocks();
         if (remaining == 0) {
@@ -273,6 +332,12 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    /**
+     * getRemainingBlocks:
+     * Realiza una cuenta de los bloques que siguen sin destruir.
+     * @return la cantidad de bloques que la bola no ha destruido.
+     * @author Eduardo Bolívar
+     */
     public int getRemainingBlocks() {
         int count = 0;
         for (Block b : this.blocks) {
@@ -283,14 +348,41 @@ public class Breakout extends JPanel implements KeyListener {
         return count;
     }
 
+    /**
+     * nextLevel:
+     * Se encarga de aumentar el nivel del juego.
+     * Llama a la función resetGame en el contexto de un aumento de nivel.
+     * @author Eduardo Bolívar
+     */
     public void nextLevel() {
         level++;
-        this.ball.accelerate();
         resetGame();
     }
 
+    /**
+     * addBall:
+     * Añade una bola al vector de bolas y asigna un ID a esta nueva bola.
+     * @author Eduardo Bolívar
+     *
+     */
     public void addBall() {
+        Ball.id_0++;
+        this.ballVector.add(new Ball(this.bar.getX() + (this.bar.getWidth()/2), this.bar.getY(), 10));
+    }
 
+    /**
+     * removeBall:
+     * Elimina la bola especificada por el parámetro, y ajusta los índices del resto de bolas para que coincidan con el orden del vector.
+     * Lo anterior para facilitar el acceso.
+     * @param a el índice de la bola a eliminar.
+     * @author Eduardo Bolívar
+     */
+    public void removeBall(int a) {
+        Ball.id_0--;
+        this.ballVector.remove(a);
+        for (int i = a; i < this.ballVector.size(); i++) {
+            this.ballVector.get(i).setId(this.ballVector.get(i).getId() - 1);
+        }
     }
 
     /**
@@ -304,7 +396,7 @@ public class Breakout extends JPanel implements KeyListener {
             this.gameOver = true;
         }
         this.bar.update_bar();
-        this.ball.update_ball(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
+        this.checkBalls(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
         this.checkCollisions();
         this.checkNextLevel();
         this.updateText();
@@ -319,10 +411,21 @@ public class Breakout extends JPanel implements KeyListener {
         this.window.repaint();
     }
 
+    /**
+     * isGameOver:
+     * @return true si el juego se encuentra en estado de Game Over, y false en caso contrario.
+     * @author Eduardo Bolívar
+     */
     public boolean isGameOver() {
         return this.gameOver;
     }
 
+    /**
+     * showGameOverMessage:
+     * Muestra un texto alternante entre el mensaje de Game Over y la cantidad de puntos logrados.
+     * @throws InterruptedException
+     * @author Eduardo Bolívar
+     */
     public void showGameOverMessage() throws InterruptedException {
         this.gameOverText.setText("GAME OVER");
         this.gameOverText.setForeground(Color.red);
@@ -332,6 +435,12 @@ public class Breakout extends JPanel implements KeyListener {
         Thread.sleep(800);
     }
 
+    /**
+     * modBarSize:
+     * Modifica el tamaño de la barra de juego.
+     * @param action bit que determina si se duplica el tamaño o si se reduce a la mitad.
+     * @author Eduardo Bolívar
+     */
     private void modBarSize(int action) {
         if (action == 0 && this.bar.getWidth() >= 70) {
             this.bar.setWidth(this.bar.getWidth()/2);
@@ -370,15 +479,14 @@ public class Breakout extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent e) {;
         this.bar.move(e.getKeyCode());
         if (e.getKeyCode() == 32) {
-            this.ball.startedMoving();
+            Ball.startMoving();
             this.title.setText("");
         }
-        else if (e.getKeyCode() == 10) {
-            //resetGame();
-            modBarSize(1);
+        else if (e.getKeyCode() == 10 && gameOver) {
+            resetGame();
         }
         else if (e.getKeyCode() == 27) {
-            modBarSize(0);
+            addBall();
         }
     }
 
@@ -409,23 +517,25 @@ public class Breakout extends JPanel implements KeyListener {
         g2d.fill3DRect((int) this.bar.getX(), (int) this.bar.getY(), (int) this.bar.getWidth(), (int) this.bar.getHeight(),true);
 
         g2d.setColor(Color.white);
-        g2d.fillOval((int) this.ball.getX(), (int) this.ball.getY(), (int) this.ball.getWidth(), (int) this.ball.getHeight());
+        for (Ball ball : this.ballVector) {
+            g2d.fillOval((int) ball.getX(), (int) ball.getY(), (int) ball.getWidth(), (int) ball.getHeight());
+        }
 
-        for (Block b : this.blocks) {
-            if (b.getType() == 1) {
+        for (Block block : this.blocks) {
+            if (block.getType() == 1) {
                 g2d.setColor(Color.red);
             }
-            else if (b.getType() == 2) {
+            else if (block.getType() == 2) {
                 g2d.setColor(Color.ORANGE);
             }
-            else if (b.getType() == 3) {
+            else if (block.getType() == 3) {
                 g2d.setColor(Color.YELLOW);
             }
-            else if (b.getType() == 4) {
+            else if (block.getType() == 4) {
                 g2d.setColor(Color.GREEN);
             }
-            if (b.getAlive()) {
-                g2d.fill3DRect((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight(), true);
+            if (block.getAlive()) {
+                g2d.fill3DRect((int) block.getX(), (int) block.getY(), (int) block.getWidth(), (int) block.getHeight(), true);
             }
         }
     }
