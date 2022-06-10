@@ -10,6 +10,8 @@ package items;
 public class Block extends Object {
     private int type;
     private boolean alive;
+    private int i;
+    private int j;
 
     /**
      * Constructor Block:
@@ -21,7 +23,7 @@ public class Block extends Object {
      * @param type tipo de bloque (rojo, naranja, amarillo o verde).
      * @author Eduardo Bolívar
      */
-    public Block(int x, int y, int width, int height, int type) {
+    public Block(double x, double y, int width, int height, int type) {
         super(x,y,width,height);
         this.type = type;
         this.alive = true;
@@ -45,6 +47,10 @@ public class Block extends Object {
         return this.alive;
     }
 
+    public void activate() {
+        this.alive = true;
+    }
+
     /**
      * kill:
      * Inactiva un bloque, por lo tanto, la bola no podrá rebotar en él ni será visible en pantalla.
@@ -52,5 +58,32 @@ public class Block extends Object {
      */
     public void kill() {
         this.alive = false;
+    }
+
+    /**
+     * getMatrixI
+     * @return posición I del bloque en la matriz de bloques.
+     */
+    public int getMatrixI() {
+        return this.i;
+    }
+
+    /**
+     * getMatrixJ:
+     * @return posición J del bloque en la matrix de bloques.
+     */
+    public int getMatrixJ() {
+        return this.j;
+    }
+
+    /**
+     * setMatrixId:
+     * Establece la ubicación i,j del bloque dentro de la matriz
+     * @param i posición I
+     * @param j posición J
+     */
+    public void setMatrixId(int i, int j) {
+        this.i = i;
+        this.j = j;
     }
 }
