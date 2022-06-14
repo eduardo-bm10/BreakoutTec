@@ -10,6 +10,8 @@ import items.Ball;
 import items.Bar;
 import items.Block;
 
+import socket.Client;
+
 /**
  * Breakout:
  * Clase de juego. Crea la ventana principal y contiene los métodos necesarios para la ejecución de la jugabilidad.
@@ -59,7 +61,7 @@ public class Breakout extends JPanel implements KeyListener {
      * resetGame:
      * Devuelve el juego a sus condiciones iniciales.
      * Reestablece la cantidad de bolas en juego, la posición y tamaño de la barra, bloques, y vidas del jugador.
-     * Si es un reset por Game Over, la velocidad de la bola vuelve a la inicial, y los puntos acumulados se eliminan.
+     * Si es un reset por game.Game Over, la velocidad de la bola vuelve a la inicial, y los puntos acumulados se eliminan.
      * Si es un reset por cambio de nivel, la velocidad de la bola aumenta y los puntos se mantienen.
      * @author Eduardo Bolívar
      */
@@ -189,7 +191,7 @@ public class Breakout extends JPanel implements KeyListener {
     /**
      * updateText:
      * Actualiza el texto en pantalla para mostrar los puntos, las vidas, y el nivel actual.
-     * En caso de Game Over, se muestra un mensaje de Game Over y los puntos conseguidos.
+     * En caso de game.Game Over, se muestra un mensaje de game.Game Over y los puntos conseguidos.
      * @author Eduardo Bolívar
      */
     public void updateText() {
@@ -262,24 +264,28 @@ public class Breakout extends JPanel implements KeyListener {
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
                 b.kill();
+                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
                 points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
                 b.kill();
+                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
                 points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
                 b.kill();
+                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
                 points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
                 b.kill();
+                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
                 points++;
                 break;
             }
@@ -387,7 +393,7 @@ public class Breakout extends JPanel implements KeyListener {
 
     /**
      * isGameOver:
-     * @return true si el juego se encuentra en estado de Game Over, y false en caso contrario.
+     * @return true si el juego se encuentra en estado de game.Game Over, y false en caso contrario.
      * @author Eduardo Bolívar
      */
     public boolean isGameOver() {
@@ -396,7 +402,7 @@ public class Breakout extends JPanel implements KeyListener {
 
     /**
      * showGameOverMessage:
-     * Muestra un texto alternante entre el mensaje de Game Over y la cantidad de puntos logrados.
+     * Muestra un texto alternante entre el mensaje de game.Game Over y la cantidad de puntos logrados.
      * @throws InterruptedException
      * @author Eduardo Bolívar
      */
@@ -416,7 +422,7 @@ public class Breakout extends JPanel implements KeyListener {
      * @param action bit que determina si se duplica el tamaño o si se reduce a la mitad.
      * @author Eduardo Bolívar
      */
-    private void modBarSize(int action) {
+    public void modBarSize(int action) {
         if (action == 0 && this.bar.getWidth() >= 70) {
             this.bar.setWidth(this.bar.getWidth()/2);
         }
@@ -445,6 +451,7 @@ public class Breakout extends JPanel implements KeyListener {
      */
     public void removeBall(int a) {
         Ball.id_0--;
+        Client.sendInfo("LB");
         this.ballVector.remove(a);
         for (int i = a; i < this.ballVector.size(); i++) {
             this.ballVector.get(i).setId(this.ballVector.get(i).getId() - 1);
@@ -477,18 +484,6 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
-
-    /**
-     * isRunning:
-     * Informa del estado de ejecución del juego, si está ejecutándose o no.
-     * @return true si el juego está en ejecución. False si la ejecución termina.
-     * @author Eduardo Bolívar
-     *
-     */
-    public boolean isRunning() {
-        return this.running;
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -511,24 +506,6 @@ public class Breakout extends JPanel implements KeyListener {
         }
         else if (e.getKeyCode() == 10 && gameOver) {
             resetGame();
-        }
-        else if (e.getKeyCode() == 38) {
-            modBarSize(1);
-        }
-        else if (e.getKeyCode() == 40) {
-            modBarSize(0);
-        }
-        else if (e.getKeyCode() == 102) {
-            changeSpeed(1);
-        }
-        else if (e.getKeyCode() == 100) {
-            changeSpeed(0);
-        }
-        else if (e.getKeyCode() == 101) {
-            addBall();
-        }
-        else if (e.getKeyCode() == 96) {
-            giveLife();
         }
     }
 

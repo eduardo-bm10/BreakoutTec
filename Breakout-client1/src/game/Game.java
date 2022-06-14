@@ -1,3 +1,5 @@
+package game;
+
 import game.Breakout;
 import game.Spectator;
 
