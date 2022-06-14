@@ -1,5 +1,8 @@
 package game;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 /**
  * Clase Spectator:
  * Es una subclase de Breakout.
@@ -7,7 +10,7 @@ package game;
  * Hace override a la función update para invalidar el movimiento de la barra en juego.
  * @author Eduardo Bolívar
  */
-public class Spectator extends Breakout {
+public class Spectator extends Breakout implements KeyListener {
     /**
      * update:
      * Verifica y actualiza constantemente el estado de juego.
@@ -22,5 +25,15 @@ public class Spectator extends Breakout {
         this.checkBalls(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
         this.checkCollisions();
         this.updateText();
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }
