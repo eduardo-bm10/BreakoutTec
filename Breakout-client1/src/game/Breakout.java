@@ -263,30 +263,22 @@ public class Breakout extends JPanel implements KeyListener {
             r2.setBounds((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight());
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
-                b.kill();
                 Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
-                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
-                b.kill();
                 Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
-                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
-                b.kill();
                 Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
-                points++;
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
-                b.kill();
                 Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
-                points++;
                 break;
             }
         }
@@ -376,6 +368,7 @@ public class Breakout extends JPanel implements KeyListener {
             this.gameOver = true;
         }
         this.bar.update_bar();
+        this.update_coords(this.bar.getX());
         this.checkBalls(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
         this.checkCollisions();
         this.checkNextLevel();
@@ -484,6 +477,23 @@ public class Breakout extends JPanel implements KeyListener {
         }
     }
 
+    public void addPoints(int p) {
+        points += p;
+    }
+
+    public void killBlock(int i, int j) {
+        for (Block b : this.blocks) {
+            if (b.getMatrixI() == i && b.getMatrixJ() == j) {
+                b.kill();
+                break;
+            }
+        }
+    }
+
+    private void update_coords(double coord) {
+        Client.sendInfo("B"+coord);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -505,6 +515,7 @@ public class Breakout extends JPanel implements KeyListener {
             this.title.setText("");
         }
         else if (e.getKeyCode() == 10 && gameOver) {
+            Client.sendInfo("RS");
             resetGame();
         }
     }

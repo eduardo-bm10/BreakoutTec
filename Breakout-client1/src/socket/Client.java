@@ -31,7 +31,6 @@ public class Client {
             }
             Game.checkGame(client);
             checkMessage(message);
-            System.out.println("Servidor: " + message);
         }
     }
 
@@ -44,26 +43,37 @@ public class Client {
     }
 
     public static void checkMessage(String msg) {
-        switch (msg) {
-            case "+V":
-                client.changeSpeed(1);
-            case "-V":
-                client.changeSpeed(0);
-            case "+B":
-                client.modBarSize(1);
-            case "-B":
-                client.modBarSize(0);
-            case "LL":
-                Breakout.removeLife();
-            case "NB":
-                client.addBall();
-            case "NL":
-                client.giveLife();
-            case "LG":
-                client.gameOver = true;
-            case "WG":
-                client.nextLevel();
-            default:
+        if (msg.startsWith("K")) {
+            int i = Integer.parseInt(msg.split(":")[1].split(",")[0]);
+            int j = Integer.parseInt(msg.split(":")[1].split(",")[1]);
+            client.killBlock(i,j);
+        }
+        else {
+            switch (msg) {
+                case "+V":
+                    client.changeSpeed(1);
+                case "-V":
+                    client.changeSpeed(0);
+                case "+B":
+                    client.modBarSize(1);
+                case "-B":
+                    client.modBarSize(0);
+                case "LL":
+                    Breakout.removeLife();
+                case "NB":
+                    client.addBall();
+                case "NL":
+                    client.giveLife();
+                case "LG":
+                    client.gameOver = true;
+                case "WG":
+                    client.nextLevel();
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                    client.addPoints(Integer.parseInt(msg));
+            }
         }
     }
 }
