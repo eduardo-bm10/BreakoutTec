@@ -7,29 +7,29 @@ import java.io.*;
 import java.net.*;
 
 public class Client {
-    private static BufferedReader in, stdIn;
+    private static BufferedReader in;
     private static PrintWriter out;
     private static Breakout client;
-
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         String hostName = "localhost";
         int portNumber = 5566;
         Socket firstSocket = new Socket(hostName, portNumber);
-
-        client = Game.getInstance();
-
         in = new BufferedReader(new InputStreamReader(firstSocket.getInputStream()));
-        stdIn = new BufferedReader(new InputStreamReader(System.in));
         out = new PrintWriter(firstSocket.getOutputStream(), true);
 
-        while (firstSocket.isConnected()) {
-            String message = receiveInfo();;
+        client = Game.getInstance();
+        Game g = new Game();
+        Thread t = new Thread(g);
+        t.start();
+
+        while (true) {
+            String message = receiveInfo();
             if (message.equals("close")) {
                in.close();
-               stdIn.close();
+               out.close();
                firstSocket.close();
+               break;
             }
-            Game.checkGame(client);
             checkMessage(message);
         }
     }
@@ -48,6 +48,9 @@ public class Client {
             int j = Integer.parseInt(msg.split(":")[1].split(",")[1]);
             client.killBlock(i,j);
         }
+        else if (msg.equals("1") || msg.equals("2") || msg.equals("3") || msg.equals("4")) {
+            client.addPoints(Integer.parseInt(msg));
+        }
         else {
             switch (msg) {
                 case "+V":
@@ -58,21 +61,10 @@ public class Client {
                     client.modBarSize(1);
                 case "-B":
                     client.modBarSize(0);
-                case "LL":
-                    Breakout.removeLife();
                 case "NB":
                     client.addBall();
                 case "NL":
                     client.giveLife();
-                case "LG":
-                    client.gameOver = true;
-                case "WG":
-                    client.nextLevel();
-                case "1":
-                case "2":
-                case "3":
-                case "4":
-                    client.addPoints(Integer.parseInt(msg));
             }
         }
     }

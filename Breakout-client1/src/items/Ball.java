@@ -1,6 +1,8 @@
 package items;
 
 import game.Breakout;
+import socket.Client;
+
 import java.lang.Math;
 
 /**

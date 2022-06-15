@@ -263,22 +263,22 @@ public class Breakout extends JPanel implements KeyListener {
             r2.setBounds((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight());
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
-                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
-                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
-                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
-                Client.sendInfo(b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
                 break;
             }
         }
@@ -369,6 +369,7 @@ public class Breakout extends JPanel implements KeyListener {
         }
         this.bar.update_bar();
         this.update_coords(this.bar.getX());
+
         this.checkBalls(this.bar.getX(), this.bar.getY(), this.bar.getWidth());
         this.checkCollisions();
         this.checkNextLevel();
@@ -444,7 +445,6 @@ public class Breakout extends JPanel implements KeyListener {
      */
     public void removeBall(int a) {
         Ball.id_0--;
-        Client.sendInfo("LB");
         this.ballVector.remove(a);
         for (int i = a; i < this.ballVector.size(); i++) {
             this.ballVector.get(i).setId(this.ballVector.get(i).getId() - 1);
@@ -515,7 +515,7 @@ public class Breakout extends JPanel implements KeyListener {
             this.title.setText("");
         }
         else if (e.getKeyCode() == 10 && gameOver) {
-            Client.sendInfo("RS");
+            //Client.sendInfo("RS");
             resetGame();
         }
     }
