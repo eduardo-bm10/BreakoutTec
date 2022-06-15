@@ -263,22 +263,22 @@ public class Breakout extends JPanel implements KeyListener {
             r2.setBounds((int) b.getX(), (int) b.getY(), (int) b.getWidth(), (int) b.getHeight());
             if (r1.intersectsLine(r2.getX(), r2.getY() + r2.getHeight(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setUp(false);
-                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo(""+b.getMatrixI() + b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY()) && b.getAlive()) {
                 b1.setUp(true);
-                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo(""+b.getMatrixI() + b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX() + r2.getWidth(), r2.getY(), r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(true);
-                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo(""+b.getMatrixI() + b.getMatrixJ());
                 break;
             }
             else if (r1.intersectsLine(r2.getX(), r2.getY(), r2.getX(), r2.getY() + r2.getHeight()) && b.getAlive()) {
                 b1.setRight(false);
-                Client.sendInfo("K:"+b.getMatrixI() +","+ b.getMatrixJ());
+                Client.sendInfo(""+b.getMatrixI() + b.getMatrixJ());
                 break;
             }
         }
