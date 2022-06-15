@@ -17,20 +17,39 @@ public class Client {
         in = new BufferedReader(new InputStreamReader(firstSocket.getInputStream()));
         out = new PrintWriter(firstSocket.getOutputStream(), true);
 
+
         client = Game.getInstance();
         Game g = new Game();
         Thread t = new Thread(g);
         t.start();
 
         while (true) {
-            String message = receiveInfo();
-            if (message.equals("close")) {
-               in.close();
-               out.close();
-               firstSocket.close();
-               break;
+
+
+            String message = "";
+            message = receiveInfo();
+
+
+            if(message == null) {
+                System.out.println("Mensaje nulo");
+                break;
+
+            } else if (message.equals("")) {
+                System.out.println("Mensaje vacío");
+
+            } else if ((message.equals("close"))) {
+                in.close();
+                out.close();
+                firstSocket.close();
+                break;
+
+            } else {
+
+                System.out.println(message);
+                checkMessage(message);
+
+
             }
-            checkMessage(message);
         }
     }
 
@@ -40,12 +59,14 @@ public class Client {
 
     public static String receiveInfo() throws IOException {
         return Client.in.readLine();
+
     }
 
     public static void checkMessage(String msg) {
         if (msg.startsWith("K")) {
             int i = Integer.parseInt(msg.split(":")[1].split(",")[0]);
             int j = Integer.parseInt(msg.split(":")[1].split(",")[1]);
+
             client.killBlock(i,j);
         }
         else if (msg.equals("1") || msg.equals("2") || msg.equals("3") || msg.equals("4")) {
